@@ -1,0 +1,4 @@
+*.txt
+*.csv
+.ruby-*
+reindeer-etl*

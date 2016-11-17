@@ -1,0 +1,21 @@
+require_relative "reindeer-etl/lib/reindeer-etl.rb"
+
+
+source(ReindeerETL::Sources::CSVSource, "./results-survey471745.csv")
+
+transform do |r|
+  source(ReindeerETL::Sources::TSVSource, "./limesurvey_survey_471745.csv")
+
+  key = Hash.new(0)
+  transform do |r|
+    if ["Q", "SQ"].include? r["class"]
+      key[r["name"]] = [r["type/scale"], r["class"]]
+    end
+    key
+  end
+  binding.pry
+end
+
+post_process do
+  ap key
+end
