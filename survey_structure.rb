@@ -44,6 +44,10 @@ class SurveyStructure < Array
     question_class(q_text) == "SQ"
   end
 
+  def has_children? q_text
+    get_children(q_text).count > 0
+  end
+
   def get_children q_text
     unless is_q? q_text
       raise MildredErrors::QuestionTypeMismatchError.new("q on sq")
@@ -51,15 +55,10 @@ class SurveyStructure < Array
 
     children = []
     row = get_row_with_text q_text
-    next_row = self[row["index"] + 1]
-    if is_sq? next_row["text"]
-      return next_row
-    else
-      next_row_is_sq? next_row
-    end
+    next_row_is_sq? row, children
   end
 
-  def get_parent_q q_text
+  def get_parent q_text
     unless is_sq? q_text
       raise MildredErrors::QuestionTypeMismatchError.new("sq on q")
     end
@@ -84,7 +83,17 @@ class SurveyStructure < Array
   private
 
   def get_next_row row
-    self[row["index" + 1]]
+    self[row["index"] + 1]
+  end
+
+  def next_row_is_sq? row, ary
+    next_row = get_next_row row
+    if is_sq? next_row["text"]
+      ary.push next_row
+      next_row_is_sq? next_row, ary
+    else
+      ary
+    end
   end
 
   def prev_row_is_q? row
@@ -99,7 +108,7 @@ class SurveyStructure < Array
   def read_file file
     first_run = true
 
-    CSV.foreach(file, col_sep: "\t").with_index(1) do |r, idx|
+    CSV.foreach(file, col_sep: ",", quote_char: "|").with_index(1) do |r, idx|
       if first_run
         first_run = false
         @headers = r.first(5)
