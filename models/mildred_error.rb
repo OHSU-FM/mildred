@@ -11,4 +11,10 @@ module MildredErrors
       super
     end
   end
+
+  class RowNotFound < StandardError
+    def initialize msg=""
+      super
+    end
+  end
 end

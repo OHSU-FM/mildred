@@ -1,4 +1,5 @@
 require "csv"
+require_relative "survey_row"
 require_relative "mildred_error"
 
 class SurveyStructure < Array
@@ -8,8 +9,39 @@ class SurveyStructure < Array
     read_file file
   end
 
-  def [] idx
-    select{|e| e["index"] == idx}.first
+  def find *ids
+    expects_array = ids.first.kind_of? Array
+    return ids.first if expects_array && ids.first.empty?
+
+    ids = ids.flatten.compact.uniq
+
+    case ids.size
+    when 0
+      raise MildredErrors::RowNotFound, "Can't find without an index"
+    when 1
+      result = select{|e| e["index"] == ids.first}
+      expects_array ? result : result.first
+    else
+      select{|e| ids.include? e["index"] }
+    end
+  end
+
+  # @return [Array[SurveyRow]]
+  def find_by args
+    case args.count
+    when 0
+      raise MildredErrors::RowNotFound, "Can't find_by without arguments"
+    when 1
+      k, v = args.first
+      select{|e| e[k] == v}
+    else
+      candidates = self
+      args.each do |arg|
+        k, v = arg
+        candidates = candidates.select{|c| c[k] == v }
+      end
+      candidates
+    end
   end
 
   def meta
@@ -34,50 +66,6 @@ class SurveyStructure < Array
 
   def answers
     select{|e| e["class"] == "A" }
-  end
-
-  def is_q? q_text
-    question_class(q_text) == "Q"
-  end
-
-  def is_sq? q_text
-    question_class(q_text) == "SQ"
-  end
-
-  def has_children? q_text
-    get_children(q_text).count > 0
-  end
-
-  def get_children q_text
-    unless is_q? q_text
-      raise MildredErrors::QuestionTypeMismatchError.new("q on sq")
-    end
-
-    children = []
-    row = get_row_with_text q_text
-    next_row_is_sq? row, children
-  end
-
-  def get_parent q_text
-    unless is_sq? q_text
-      raise MildredErrors::QuestionTypeMismatchError.new("sq on q")
-    end
-
-    row = get_row_with_text q_text
-    prev_row_is_q? row
-  end
-
-  def question_class q_text
-    get_row_with_text(q_text)["class"]
-  end
-
-  def get_row_with_text q_text
-    opts = select{|e| e["text"] == q_text }
-    if opts.count == 1
-      opts.first
-    else
-      raise MildredErrors::DuplicateRowError
-    end
   end
 
   private
@@ -115,7 +103,7 @@ class SurveyStructure < Array
         next
       end
 
-      row = Hash.new
+      row = SurveyRow.new
       row["index"] = idx - 1
       r.first(5).each_with_index do |e, i|
         row[@headers[i]] = e
