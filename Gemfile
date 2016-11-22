@@ -1,8 +1,6 @@
 source "https://rubygems.org"
 gem "reindeer-etl"
 gem "kiba"
-gem "activemodel"
-gem "activemodel-associations"
 gem "awesome_print"
 
 gem "rspec"

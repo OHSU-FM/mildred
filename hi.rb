@@ -1,8 +1,8 @@
-require "csv"
 require "pry"
-require_relative "models/survey_structure"
+require_relative "lib/mildred"
+require_relative "lib/mildred/survey_structure"
 
-t=SurveyStructure.new("./limesurvey_survey_471745.csv")
+t=SurveyStructure.new("./tmp/limesurvey_survey_471745.csv")
 binding.pry
 
 # discard = ["S", "SL"]

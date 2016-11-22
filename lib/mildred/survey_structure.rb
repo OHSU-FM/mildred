@@ -1,6 +1,4 @@
 require "csv"
-require_relative "survey_row"
-require_relative "mildred_error"
 
 class SurveyStructure < Array
   attr_reader :headers
@@ -68,43 +66,39 @@ class SurveyStructure < Array
     select{|e| e["class"] == "A" }
   end
 
-  private
-
-  def get_next_row row
-    self[row["index"] + 1]
-  end
-
   def next_row_is_sq? row, ary
-    next_row = get_next_row row
-    if is_sq? next_row["text"]
+    next_row = find(row.index + 1)
+    if next_row.nil? or !next_row.is_a_sq?
+      ary
+    else
       ary.push next_row
       next_row_is_sq? next_row, ary
-    else
-      ary
     end
   end
 
   def prev_row_is_q? row
-    prev_row = self[row["index"] - 1]
-    if is_q? prev_row["text"]
+    prev_row = find(row.index - 1)
+    if prev_row.is_a_q?
       return prev_row
     else
       prev_row_is_q? prev_row
     end
   end
 
+  private
+
   def read_file file
     first_run = true
 
-    CSV.foreach(file, col_sep: ",", quote_char: "|").with_index(1) do |r, idx|
+    CSV.foreach(file, col_sep: ",", quote_char: "|").with_index(0) do |r, idx|
       if first_run
         first_run = false
         @headers = r.first(5)
         next
       end
 
-      row = SurveyRow.new
-      row["index"] = idx - 1
+      row = SurveyRow.new()
+      row["index"] = idx
       r.first(5).each_with_index do |e, i|
         row[@headers[i]] = e
       end

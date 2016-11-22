@@ -2,8 +2,7 @@ require "rspec"
 require "yaml"
 require "pry"
 
-require_relative "../models/survey_structure"
-require_relative "../models/survey_row"
+require_relative "../lib/mildred"
 
 RSpec.configure do |config|
   config.expect_with :rspec do |c|

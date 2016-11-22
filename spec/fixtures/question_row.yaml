@@ -1,7 +1,7 @@
 ---
-index: 2
-class: Q
-type/scale: N
-name: G0Q1
-relevance: '1'
-text: Group 0 Question 1
+  index: 8
+  class: Q
+  type/scale: ;
+  name: G1Q1
+  relevance: '1'
+  text: Group 1 Question 1

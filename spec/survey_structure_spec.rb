@@ -19,12 +19,14 @@ describe SurveyStructure do
       end
 
       it "can accept multiple indices" do
+        expect(@ss.find(1, 2)).to be_an_instance_of Array
         @ss.find(1, 2).each do |row|
           expect(row).to be_an_instance_of SurveyRow
         end
       end
 
       it "can accept an array of indices" do
+        expect(@ss.find([1, 2])).to be_an_instance_of Array
         @ss.find([1, 2]).each do |row|
           expect(row).to be_an_instance_of SurveyRow
         end
