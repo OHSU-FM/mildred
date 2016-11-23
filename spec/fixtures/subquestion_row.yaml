@@ -1,7 +1,7 @@
 ---
-  index: 9
+  index: 8
   class: SQ
   type/scale: "0"
-  name: SQ001
+  name: other
   relevance: '1'
-  text: Subquestion 1
+  text: Other

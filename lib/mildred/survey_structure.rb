@@ -3,7 +3,8 @@ require "csv"
 class SurveyStructure < Array
   attr_reader :headers
 
-  def initialize file
+  def initialize file, opts = {}
+    @csv_opts = {headers: true, col_sep: "\t", quote_char: "|"}.merge(opts)
     read_file file
   end
 
@@ -88,19 +89,12 @@ class SurveyStructure < Array
   private
 
   def read_file file
-    first_run = true
-
-    CSV.foreach(file, col_sep: ",", quote_char: "|").with_index(0) do |r, idx|
-      if first_run
-        first_run = false
-        @headers = r.first(5)
-        next
-      end
-
+    CSV.foreach(file, @csv_opts).with_index(0) do |r, idx|
       row = SurveyRow.new()
       row["index"] = idx
-      r.first(5).each_with_index do |e, i|
-        row[@headers[i]] = e
+      binding.pry if r["type/scale"] == ";"
+      r.first(5).each do |h, r|
+        row[h] = r
       end
       self.push row
     end

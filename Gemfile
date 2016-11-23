@@ -1,7 +1,8 @@
 source "https://rubygems.org"
-gem "reindeer-etl"
 gem "kiba"
 gem "awesome_print"
+
+gem "rest-client"
 
 gem "rspec"
 gem "guard"
