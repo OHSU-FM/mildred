@@ -90,9 +90,17 @@ class SurveyStructure < Array
 
   def read_file file
     CSV.foreach(file, @csv_opts).with_index(0) do |r, idx|
-      row = SurveyRow.new()
+      if r["class"] == "Q"
+        case r["type/scale"]
+        when ";"
+          row = SemicolonRow.new()
+        else
+          row = SurveyRow.new()
+        end
+      else
+        row = SurveyRow.new()
+      end
       row["index"] = idx
-      binding.pry if r["type/scale"] == ";"
       r.first(5).each do |h, r|
         row[h] = r
       end

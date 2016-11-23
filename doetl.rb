@@ -11,10 +11,10 @@ pre_process do
       end
     end
   end
+  $ss = SurveyStructure.new("./tmp/limesurvey_survey_471745.txt")
 end
 
 source(ReindeerETL::Sources::CSVSource, "./tmp/vvexport_471745.csv", {col_sep: "\t", quote_char: "|"})
 
-$ss = SurveyStructure.new("./tmp/limesurvey_survey_471745.txt")
 
-transform ReindeerETL::Transforms::ResponseStatus
+transform ReindeerETL::Transforms::ResponseStatus, {except: ["id", "token", "submitdate", "lastpage", "startlanguage"]}
