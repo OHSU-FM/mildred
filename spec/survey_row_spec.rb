@@ -44,7 +44,11 @@ describe SurveyRow do
     end
 
     it "#parent" do
-      expect{@row.parent}.to raise_error MildredErrors::QuestionTypeMismatchError
+      expect{@row.parent}.to raise_error MildredError::QuestionTypeMismatchError
+    end
+
+    it "#answers" do
+      expect(@row.answers.length).to eq 5
     end
   end
 
@@ -62,11 +66,11 @@ describe SurveyRow do
     end
 
     it "#has_children?" do
-      expect{@row.has_children?}.to raise_error MildredErrors::QuestionTypeMismatchError
+      expect{@row.has_children?}.to raise_error MildredError::QuestionTypeMismatchError
     end
 
     it "#children" do
-      expect{@row.children}.to raise_error MildredErrors::QuestionTypeMismatchError
+      expect{@row.children}.to raise_error MildredError::QuestionTypeMismatchError
     end
 
     it "#parent" do

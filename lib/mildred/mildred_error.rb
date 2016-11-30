@@ -1,4 +1,4 @@
-module MildredErrors
+module MildredError
   class DuplicateRowError < StandardError
     def initialize msg = "Multiple rows with the same question text"
       super
@@ -16,5 +16,8 @@ module MildredErrors
     def initialize msg=""
       super
     end
+  end
+
+  class NotImplimentedError < StandardError
   end
 end

@@ -1,0 +1,6 @@
+require_relative "gender"
+require_relative "list_radio"
+require_relative "numerical_input"
+require_relative "short_free_text"
+require_relative "list_dd"
+require_relative "array_mult_text"

@@ -8,9 +8,6 @@ describe SurveyStructure do
   describe "methods" do
     it "#initialize" do
       expect(@ss).to be_an_instance_of SurveyStructure
-      @ss.each do |row|
-        expect(row).to be_an_instance_of SurveyRow
-      end
     end
 
     describe "#find" do
@@ -35,9 +32,9 @@ describe SurveyStructure do
 
     it "#find_by gets row by provided key" do
       single = @ss.find_by(name: "sid")
-      expect(single.first).to be_an_instance_of SurveyRow
+      expect(single).to be_an_instance_of SurveyRow
       mult = @ss.find_by(name: "sid", text: "111111")
-      expect(mult.first).to be_an_instance_of SurveyRow
+      expect(mult).to be_an_instance_of SurveyRow
     end
 
     it "#meta" do

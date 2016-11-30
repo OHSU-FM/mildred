@@ -5,3 +5,8 @@
   name: G1Q1
   relevance: '1'
   text: Group 1 Question 1
+  help:
+  language: "en"
+  validation:
+  mandatory:
+  other: "N"

@@ -18,7 +18,7 @@ class SurveyRow < OpenStruct
 
   def children
     unless is_a_q?
-      raise MildredErrors::QuestionTypeMismatchError.new("q on sq")
+      raise MildredError::QuestionTypeMismatchError.new("q on sq")
     end
 
     children = []
@@ -27,9 +27,22 @@ class SurveyRow < OpenStruct
 
   def parent
     unless is_a_sq?
-      raise MildredErrors::QuestionTypeMismatchError.new("sq on q")
+      raise MildredError::QuestionTypeMismatchError.new("sq on q")
     end
 
     survey_structure.prev_row_is_q? self
+  end
+
+  def answers
+    answers = []
+    survey_structure.answers_for_row self, answers
+  end
+
+  def general_code val
+    if manditory && val.blank?
+      "E999E"
+    else
+      "E111E"
+    end
   end
 end

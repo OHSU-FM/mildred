@@ -5,3 +5,9 @@
   name: other
   relevance: '1'
   text: Other
+  help:
+  language: "en"
+  validation:
+  mandatory:
+  other:
+

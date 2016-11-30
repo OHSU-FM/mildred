@@ -3,6 +3,37 @@ require "csv"
 class SurveyStructure < Array
   attr_reader :headers
 
+  ROWS_DICT = {
+    "1" => "ArrayDual",
+    "5" => "FivePoint",
+    "A" => "ArrayFivePoint",
+    "B" => "ArrayTenPoint",
+    "C" => "YesNoUnc",
+    "D" => "Date",
+    "E" => "ArrayIncDecSame",
+    "F" => "ArrayFlex",
+    "G" => "Gender",
+    "H" => "ArrayFlexByColumn",
+    "I" => "LangSwitch",
+    "K" => "MultNumeric",
+    "L" => "ListRadio",
+    "M" => "MultChoice",
+    "N" => "NumericalInput",
+    "O" => "ListWComment",
+    "P" => "MultChoiceWComment",
+    "Q" => "MultShortText",
+    "R" => "Ranking",
+    "S" => "ShortFreeText",
+    "T" => "LongFreeText",
+    "U" => "HugeFreeText",
+    "X" => "Boilerplate",
+    "Y" => "YesNo",
+    "!" => "ListDropdown",
+    ":" => "ArrayMultDropdown",
+    ";" => "ArrayMultText",
+    "|" => "FileUpload"
+  }
+
   def initialize file, opts = {}
     @csv_opts = {headers: true, col_sep: "\t", quote_char: "|"}.merge(opts)
     read_file file
@@ -16,7 +47,7 @@ class SurveyStructure < Array
 
     case ids.size
     when 0
-      raise MildredErrors::RowNotFound, "Can't find without an index"
+      raise MildredError::RowNotFound, "Can't find without an index"
     when 1
       result = select{|e| e["index"] == ids.first}
       expects_array ? result : result.first
@@ -25,21 +56,22 @@ class SurveyStructure < Array
     end
   end
 
-  # @return [Array[SurveyRow]]
+  # @return [SurveyRow]
   def find_by args
     case args.count
     when 0
-      raise MildredErrors::RowNotFound, "Can't find_by without arguments"
+      raise MildredError::RowNotFound, "Can't find_by without arguments"
     when 1
       k, v = args.first
-      select{|e| e[k] == v}
+      cand = select{|e| e[k] == v}
+      cand.length == 1 ? cand.first : cand
     else
-      candidates = self
+      cand = self
       args.each do |arg|
         k, v = arg
-        candidates = candidates.select{|c| c[k] == v }
+        cand = cand.select{|c| c[k] == v }
       end
-      candidates
+      cand.length == 1 ? cand.first : cand
     end
   end
 
@@ -86,22 +118,33 @@ class SurveyStructure < Array
     end
   end
 
+  def answers_for_row row, ary
+    next_row = find(row.index + 1)
+    if next_row.nil? or next_row.is_a_q?
+      ary
+    elsif next_row.is_a_sq?
+      answers_for_row next_row, ary
+    else
+      ary.push next_row
+      answers_for_row next_row, ary
+    end
+  end
+
   private
 
   def read_file file
     CSV.foreach(file, @csv_opts).with_index(0) do |r, idx|
       if r["class"] == "Q"
-        case r["type/scale"]
-        when ";"
-          row = SemicolonRow.new()
+        if ROWS_DICT.keys.include? r["type/scale"]
+          row = Object.const_get("Rows").const_get("#{ROWS_DICT[r["type/scale"]]}").new()
         else
-          row = SurveyRow.new()
+          raise MildredError::NotImplimentedError, r["type/scale"]
         end
       else
         row = SurveyRow.new()
       end
       row["index"] = idx
-      r.first(5).each do |h, r|
+      r.first(10).each do |h, r|
         row[h] = r
       end
       self.push row
