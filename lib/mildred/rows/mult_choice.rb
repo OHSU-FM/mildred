@@ -1,5 +1,5 @@
 module Rows
-  class ListRadio < SurveyRow
+  class MultChoice < SurveyRow
     def code val
       general_checks val
       # TODO

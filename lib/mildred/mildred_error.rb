@@ -18,6 +18,9 @@ module MildredError
     end
   end
 
-  class NotImplimentedError < StandardError
+  class UnknownRowError < StandardError
+    def initialize msg = "type/scale not found in ROWS_DICT"
+      super
+    end
   end
 end

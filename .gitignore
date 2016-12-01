@@ -2,3 +2,4 @@
 *.csv
 .ruby-*
 reindeer-etl*
+tmp

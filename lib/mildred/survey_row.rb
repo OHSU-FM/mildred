@@ -1,5 +1,15 @@
 class SurveyRow < OpenStruct
 
+  CODES = {
+    "E111E" => "Answered",
+    "E222E" => "Optional - Unanswered",
+    "E333E" => "Optional - Answered",
+    "E555E" => "Invalid Response",
+    "E777E" => "Skipped/Not Asked",
+    "E888E" => "Not Applicable",
+    "E999E" => "Missing"
+  }
+
   def survey_structure
     $ss
   end
@@ -10,6 +20,14 @@ class SurveyRow < OpenStruct
 
   def is_a_sq?
     self[:class] == "SQ"
+  end
+
+  def is_a_g?
+    self[:class] == "G"
+  end
+
+  def is_a_a?
+    self[:class] == "A"
   end
 
   def has_children?
@@ -38,11 +56,16 @@ class SurveyRow < OpenStruct
     survey_structure.answers_for_row self, answers
   end
 
-  def general_code val
-    if manditory && val.blank?
-      "E999E"
-    else
-      "E111E"
+  # catches coding cases that apply to all row subclasses
+  def general_checks val
+    if val.nil?
+      if mandatory == "Y"
+        if !relevance.include? "NAOK" # skip logic
+          binding.pry
+        else
+          @check_skip = true
+        end
+      end
     end
   end
 end

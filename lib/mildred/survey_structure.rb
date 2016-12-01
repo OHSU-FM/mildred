@@ -8,7 +8,7 @@ class SurveyStructure < Array
     "5" => "FivePoint",
     "A" => "ArrayFivePoint",
     "B" => "ArrayTenPoint",
-    "C" => "YesNoUnc",
+    "C" => "ArrayYesNoUnc",
     "D" => "Date",
     "E" => "ArrayIncDecSame",
     "F" => "ArrayFlex",
@@ -75,6 +75,18 @@ class SurveyStructure < Array
     end
   end
 
+  def find_by_name name
+    name = name.split("_")
+    case name.length
+    when 1
+      find_by(name: name[0])
+    when 2
+      find_by(name: name[0]).children.select{|child| child.name == name[1] }
+    else
+      raise "T_T"
+    end
+  end
+
   def meta
     select{|e| ["S", "SL"].include? e["class"] }
   end
@@ -120,7 +132,7 @@ class SurveyStructure < Array
 
   def answers_for_row row, ary
     next_row = find(row.index + 1)
-    if next_row.nil? or next_row.is_a_q?
+    if next_row.nil? or next_row.is_a_q? or next_row.is_a_g?
       ary
     elsif next_row.is_a_sq?
       answers_for_row next_row, ary
@@ -130,15 +142,24 @@ class SurveyStructure < Array
     end
   end
 
+  def code_array name, val
+    val.nil ? "222" : "333"
+  end
+
   private
 
   def read_file file
     CSV.foreach(file, @csv_opts).with_index(0) do |r, idx|
       if r["class"] == "Q"
         if ROWS_DICT.keys.include? r["type/scale"]
-          row = Object.const_get("Rows").const_get("#{ROWS_DICT[r["type/scale"]]}").new()
+          begin
+            row = Object.const_get("Rows").const_get("#{ROWS_DICT[r["type/scale"]]}").new()
+          rescue => e
+            pp e.message
+            raise e
+          end
         else
-          raise MildredError::NotImplimentedError, r["type/scale"]
+          raise MildredError::UnknownRowError r["type/scale"]
         end
       else
         row = SurveyRow.new()

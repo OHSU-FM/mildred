@@ -10,6 +10,13 @@ describe SurveyRow do
       @row = row_from_fixture("generic_row")
     end
 
+    it "responds to the expected methods" do
+      expect(@row.is_a_q?).not_to be_nil
+      expect(@row.is_a_sq?).not_to be_nil
+      expect(@row.is_a_g?).not_to be_nil
+      expect(@row.is_a_a?).not_to be_nil
+    end
+
     it "has attr readers" do
       @row.each do |key, value|
         expect(@row.send(key.to_sym)).to eq value
@@ -31,7 +38,15 @@ describe SurveyRow do
     end
 
     it "!#is_a_sq?" do
-      expect(@row.is_a_sq?).not_to be_truthy
+      expect(@row.is_a_sq?).to be_falsey
+    end
+
+    it "!#is_a_g?" do
+      expect(@row.is_a_g?).to be_falsey
+    end
+
+    it "!#is_a_a?" do
+      expect(@row.is_a_a?).to be_falsey
     end
 
     it "#has_children?" do

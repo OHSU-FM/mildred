@@ -1,7 +1,7 @@
 module Rows
   class NumericalInput < SurveyRow
     def code val
-      binding.pry
+      general_checks val
     end
   end
 end

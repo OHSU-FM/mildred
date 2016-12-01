@@ -1,7 +1,8 @@
 module Rows
-  class ArrayMultTextRow < SurveyRow
+  class ArrayMultText < SurveyRow
     def code
-      binding.pry
+      general_checks val
+      # TODO
     end
   end
 end
