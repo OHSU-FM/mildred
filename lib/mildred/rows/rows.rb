@@ -12,3 +12,5 @@ require_relative "list_dd"
 require_relative "array_mult_dd"
 require_relative "yes_no"
 require_relative "array_mult_text"
+
+require_relative "subquestion_row"

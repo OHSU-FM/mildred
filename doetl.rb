@@ -18,4 +18,4 @@ source(ReindeerETL::Sources::CSVSource, "./tmp/vvexport_487866.csv", {col_sep: "
 
 transform ReindeerETL::Transforms::ResponseStatus, {except: ["id", "token", "submitdate", "lastpage", "startlanguage", "startdate", "datestamp"]}
 
-destination ReindeerETL::Destinations::CSVDest, "./tmp/test.csv", {col_sep: "\t", quote_char: "|"}
+destination ReindeerETL::Destinations::CSVDest, "./tmp/test.csv"

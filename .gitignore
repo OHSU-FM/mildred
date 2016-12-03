@@ -1,5 +1,4 @@
 *.txt
-*.csv
 .ruby-*
 reindeer-etl*
 tmp

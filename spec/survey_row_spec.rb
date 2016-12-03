@@ -14,7 +14,7 @@ describe SurveyRow do
       expect(@row.is_a_q?).not_to be_nil
       expect(@row.is_a_sq?).not_to be_nil
       expect(@row.is_a_g?).not_to be_nil
-      expect(@row.is_a_a?).not_to be_nil
+      expect(@row.is_an_a?).not_to be_nil
     end
 
     it "has attr readers" do
@@ -45,8 +45,8 @@ describe SurveyRow do
       expect(@row.is_a_g?).to be_falsey
     end
 
-    it "!#is_a_a?" do
-      expect(@row.is_a_a?).to be_falsey
+    it "!#is_an_a?" do
+      expect(@row.is_an_a?).to be_falsey
     end
 
     it "#has_children?" do
@@ -55,6 +55,7 @@ describe SurveyRow do
 
     it "#children" do
       @sq = row_from_fixture("subquestion_row")
+      expect(@row.children.count).to eq 7
       expect(@row.children).to include @sq
     end
 
@@ -62,8 +63,16 @@ describe SurveyRow do
       expect{@row.parent}.to raise_error MildredError::QuestionTypeMismatchError
     end
 
+    it "#subquestions" do
+      @sq = row_from_fixture("subquestion_row")
+      expect(@row.subquestions.length).to eq 1
+      expect(@row.subquestions).to include @sq
+    end
+
     it "#answers" do
-      expect(@row.answers.length).to eq 5
+      @ans = row_from_fixture("answer_row")
+      expect(@row.answers.length).to eq 6
+      expect(@row.answers).to include @ans
     end
   end
 
@@ -91,6 +100,53 @@ describe SurveyRow do
     it "#parent" do
       @q = row_from_fixture("question_row")
       expect(@row.parent).to eq @q
+    end
+
+    it "#subquestions" do
+      expect{@row.subquestions}.to raise_error MildredError::QuestionTypeMismatchError
+    end
+
+    it "#answers" do
+      expect{@row.answers}.to raise_error MildredError::QuestionTypeMismatchError
+    end
+  end
+
+  describe "answer row" do
+    before do
+      @row = row_from_fixture("answer_row")
+    end
+
+    it "!#is_a_q?" do
+      expect(@row.is_a_q?).to be_falsey
+    end
+
+    it "!#is_a_sq?" do
+      expect(@row.is_a_sq?).to be_falsey
+    end
+
+    it "#is_an_a?" do
+      expect(@row.is_an_a?).to be_truthy
+    end
+
+    it "#has_children?" do
+      expect{@row.has_children?}.to raise_error MildredError::QuestionTypeMismatchError
+    end
+
+    it "#children" do
+      expect{@row.children}.to raise_error MildredError::QuestionTypeMismatchError
+    end
+
+    it "#parent" do
+      @q = row_from_fixture("question_row")
+      expect(@row.parent).to eq @q
+    end
+
+    it "#subquestions" do
+      expect{@row.subquestions}.to raise_error MildredError::QuestionTypeMismatchError
+    end
+
+    it "#answers" do
+      expect{@row.answers}.to raise_error MildredError::QuestionTypeMismatchError
     end
   end
 end

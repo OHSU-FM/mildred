@@ -35,7 +35,7 @@ class SurveyStructure < Array
   }
 
   def initialize file, opts = {}
-    @csv_opts = {headers: true, col_sep: "\t", quote_char: "|"}.merge(opts)
+    @csv_opts = {headers: true, col_sep: "\t", quote_char: "*"}.merge(opts)
     read_file file
   end
 
@@ -81,7 +81,8 @@ class SurveyStructure < Array
     when 1
       find_by(name: name[0])
     when 2
-      find_by(name: name[0]).children.select{|child| child.name == name[1] }
+      c = find_by(name: name[0]).subquestions.select{|child| child.name == name[1] }
+      c.length == 1 ? c.first : c
     else
       raise "T_T"
     end
@@ -111,13 +112,13 @@ class SurveyStructure < Array
     select{|e| e["class"] == "A" }
   end
 
-  def next_row_is_sq? row, ary
+  def next_row_is_child? row, ary
     next_row = find(row.index + 1)
-    if next_row.nil? or !next_row.is_a_sq?
+    if next_row.nil? or !["SQ", "A"].include? next_row["class"]
       ary
     else
       ary.push next_row
-      next_row_is_sq? next_row, ary
+      next_row_is_child? next_row, ary
     end
   end
 
@@ -161,6 +162,8 @@ class SurveyStructure < Array
         else
           raise MildredError::UnknownRowError r["type/scale"]
         end
+      elsif r["class"] == "SQ"
+        row = Rows::Subquestion.new()
       else
         row = SurveyRow.new()
       end

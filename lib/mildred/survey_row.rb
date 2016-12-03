@@ -1,13 +1,13 @@
 class SurveyRow < OpenStruct
 
   CODES = {
-    "E111E" => "Answered",
-    "E222E" => "Optional - Unanswered",
-    "E333E" => "Optional - Answered",
-    "E555E" => "Invalid Response",
-    "E777E" => "Skipped/Not Asked",
-    "E888E" => "Not Applicable",
-    "E999E" => "Missing"
+    "111" => "Answered",
+    "222" => "Optional - Unanswered",
+    "333" => "Optional - Answered",
+    "555" => "Invalid Response",
+    "777" => "Skipped/Not Asked",
+    "888" => "Not Applicable",
+    "999" => "Missing"
   }
 
   def survey_structure
@@ -26,7 +26,7 @@ class SurveyRow < OpenStruct
     self[:class] == "G"
   end
 
-  def is_a_a?
+  def is_an_a?
     self[:class] == "A"
   end
 
@@ -34,26 +34,38 @@ class SurveyRow < OpenStruct
     children.count > 0
   end
 
+  # returns list of subquestions and answers
   def children
     unless is_a_q?
-      raise MildredError::QuestionTypeMismatchError.new("q on sq")
+      raise MildredError::QuestionTypeMismatchError.new("q on sq, a, or g")
     end
 
     children = []
-    survey_structure.next_row_is_sq? self, children
+    survey_structure.next_row_is_child? self, children
   end
 
   def parent
-    unless is_a_sq?
-      raise MildredError::QuestionTypeMismatchError.new("sq on q")
+    unless is_a_sq? or is_an_a?
+      raise MildredError::QuestionTypeMismatchError.new("sq on q or g")
     end
 
     survey_structure.prev_row_is_q? self
   end
 
+  def subquestions
+    unless is_a_q?
+      raise MildredError::QuestionTypeMismatchError.new("q on sq, a, or g")
+    end
+
+    children.select{|r| r["class"] == "SQ"}
+  end
+
   def answers
-    answers = []
-    survey_structure.answers_for_row self, answers
+    unless is_a_q?
+      raise MildredError::QuestionTypeMismatchError.new("q on sq, a or g")
+    end
+
+    children.select{|r| r["class"] == "A"}
   end
 
   # catches coding cases that apply to all row subclasses

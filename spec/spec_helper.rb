@@ -3,6 +3,7 @@ require "yaml"
 require "pry"
 
 require_relative "../lib/mildred"
+# require_relative "../lib/mildred/rows/rows"
 
 RSpec.configure do |config|
   config.expect_with :rspec do |c|
@@ -16,7 +17,15 @@ def from_fixture
 end
 
 def row_from_fixture fixture_path
-  survey_row = SurveyRow.new
+  case YAML.load_file("spec/fixtures/#{fixture_path}.yaml")["type/scale"]
+  when "K"
+    survey_row = Rows::MultNumeric.new
+  when "F"
+    survey_row = Rows::ArrayFlex.new
+  else
+    survey_row = SurveyRow.new
+  end
+
   YAML.load_file("spec/fixtures/#{fixture_path}.yaml").map {|k, v| survey_row[k] = v }
   survey_row
 end
