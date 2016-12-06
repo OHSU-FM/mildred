@@ -70,14 +70,19 @@ class SurveyRow < OpenStruct
 
   # catches coding cases that apply to all row subclasses
   def general_checks val
+    self["self_val"] = val if self_val.nil?
+
     if val.nil?
       if mandatory == "Y"
         if !relevance.include? "NAOK" # skip logic
-          binding.pry
+          @check_skip = false
         else
           @check_skip = true
         end
       end
+    elsif val == "{question_not_shown}"
+      ecode = "777"
     end
+    ecode
   end
 end

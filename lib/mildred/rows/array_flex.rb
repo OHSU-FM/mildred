@@ -1,8 +1,13 @@
 module Rows
   class ArrayFlex < SurveyRow
-    def code val
-      general_checks val
-      # TODO
+    def code val, sq=nil
+      ecode = general_checks val
+      if ecode.nil?
+        if validation.nil? && !val.nil?
+          ecode = "111"
+        end
+      end
+      ecode
     end
   end
 end

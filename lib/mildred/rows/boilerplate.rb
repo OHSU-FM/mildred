@@ -1,8 +1,7 @@
 module Rows
   class Boilerplate < SurveyRow
     def code val
-      general_checks val
-      # TODO
+      "111"
     end
   end
 end

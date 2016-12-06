@@ -75,7 +75,7 @@ class SurveyStructure < Array
     end
   end
 
-  def find_by_name name
+  def find_by_name name, val
     name = name.split("_")
     case name.length
     when 1
@@ -84,7 +84,7 @@ class SurveyStructure < Array
       c = find_by(name: name[0]).subquestions.select{|child| child.name == name[1] }
       c.length == 1 ? c.first : c
     else
-      raise "T_T"
+      code_array val
     end
   end
 
@@ -144,7 +144,7 @@ class SurveyStructure < Array
   end
 
   def code_array name, val
-    val.nil ? "222" : "333"
+    val.nil? ? "222" : "333"
   end
 
   private
