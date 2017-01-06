@@ -2,6 +2,7 @@ source "https://rubygems.org"
 gem "kiba"
 gem "reindeer-etl", path: "reindeer-etl"
 gem "awesome_print"
+gem "progress_bar"
 
 gem "rest-client"
 
