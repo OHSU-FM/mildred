@@ -1,3 +1,9 @@
+PATH
+  remote: reindeer-etl
+  specs:
+    reindeer-etl (1.0.0)
+      rest-client (~> 1.8)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -78,6 +84,7 @@ DEPENDENCIES
   guard-rspec
   kiba
   pry
+  reindeer-etl!
   rest-client
   rspec
 
