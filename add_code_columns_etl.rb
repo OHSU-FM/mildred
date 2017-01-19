@@ -1,7 +1,6 @@
 require "reindeer-etl"
-# require_relative "reindeer-etl/lib/reindeer-etl.rb"
 
-sid = 363317
+sid = 692985
 
 pre_process do
   first_run = true
@@ -17,6 +16,6 @@ end
 
 source(ReindeerETL::Sources::CSVSource, "./tmp/vvexport_#{sid}.csv", {col_sep: "\t", quote_char: "|"})
 
-transform ReindeerETL::Transforms::ResponseStatus, "./tmp/limesurvey_survey_#{sid}.txt", {except: ["id", "token", "submitdate", "lastpage", "startlanguage", "startdate", "datestamp", "ipaddr"]}
+transform(ReindeerETL::Transforms::ResponseStatus, "./tmp/limesurvey_survey_#{sid}.txt", {except: ["id", "token", "submitdate", "lastpage", "startlanguage", "startdate", "datestamp", "ipaddr"]})
 
-destination ReindeerETL::Destinations::CSVDest, "./tmp/recoded_#{sid}.csv"
+destination(ReindeerETL::Destinations::CSVDest, "./tmp/step1_#{sid}.csv")
