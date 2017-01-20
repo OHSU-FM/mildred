@@ -1,6 +1,6 @@
 require "reindeer-etl"
 
-sid = 692985
+sid = 237884
 
 pre_process do
   first_run = true
@@ -16,6 +16,6 @@ end
 
 source(ReindeerETL::Sources::CSVSource, "./tmp/vvexport_#{sid}.csv", {col_sep: "\t", quote_char: "|"})
 
-transform(ReindeerETL::Transforms::ResponseStatus, "./tmp/limesurvey_survey_#{sid}.txt", {except: ["id", "token", "submitdate", "lastpage", "startlanguage", "startdate", "datestamp", "ipaddr"]})
+transform(ReindeerETL::Transforms::ResponseStatus, "./tmp/limesurvey_survey_#{sid}.txt", {except: ["id", "token", "submitdate", "lastpage", "startlanguage"], complete: true})
 
 destination(ReindeerETL::Destinations::CSVDest, "./tmp/step1_#{sid}.csv")
